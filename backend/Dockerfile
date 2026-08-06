@@ -1,21 +1,15 @@
-# syntax=docker/dockerfile:1
-FROM node:20-alpine
+FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy dependency metadata first so Docker can cache dependency installation.
+# Dependency files copy & install
 COPY package*.json ./
-RUN npm install --omit=dev && npm cache clean --force
+RUN npm install
 
-# Copy application source after dependencies.
-COPY src ./src
-
-ENV NODE_ENV=production
-ENV PORT=5000
+# Rest of the code copy
+COPY . .
 
 EXPOSE 5000
 
-# The official Node image already includes the non-root "node" user.
-USER node
-
-CMD ["npm", "start"]
+# Direct src/server.js point kore dewa holo
+CMD ["node", "src/server.js"]
