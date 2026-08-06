@@ -11,5 +11,4 @@ COPY . .
 
 EXPOSE 5000
 
-# Direct src/server.js point kore dewa holo
 CMD ["node", "src/server.js"]
