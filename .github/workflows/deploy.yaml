@@ -1,43 +1,27 @@
-name: CI/CD Pipeline to AWS EC2
+name: CI/CD Pipeline
 
-# Trigger the workflow automatically on every push to the main branch
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
-  # Job 1: Build the Docker images and push them to Docker Hub
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout the repository code onto the runner
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Authenticate with Docker Hub using encrypted repository secrets
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 3: Build the backend Docker image and push it to Docker Hub
-      - name: Build and Push Backend Image
-        uses: docker/build-push-action@v5
+      - name: Build and push Docker images
+        uses: docker/bake-action@v4
         with:
-          context: ./backend
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/ims-backend:latest
 
-      # Step 4: Build the frontend Docker image and push it to Docker Hub
-      - name: Build and Push Frontend Image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./frontend
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/ims-frontend:latest
-
-  # Job 2: Connect to the AWS EC2 instance via SSH and deploy the application
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -49,14 +33,14 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Check if the project directory exists; if not, create it and clone the repository
-            if [ ! -d /home/rakib/lab/docker-lab ]; then
-              mkdir -p /home/rakib/lab
-              git clone https://github.com/${{ github.repository }}.git /home/rakib/lab/docker-lab
+            # Check if the project directory exists in the home folder; if not, create it and clone the repository
+            if [ ! -d ~/lab/docker-lab ]; then
+              mkdir -p ~/lab
+              git clone https://github.com/${{ github.repository }}.git ~/lab/docker-lab
             fi
             
             # Navigate to the project directory, pull the latest code, update Docker images, and restart containers safely
-            cd /home/rakib/lab/docker-lab
+            cd ~/lab/docker-lab
             git pull origin main
             docker compose pull
             docker compose up -d --remove-orphans
