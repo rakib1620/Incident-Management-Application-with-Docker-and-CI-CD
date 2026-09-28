@@ -1,4 +1,4 @@
-# bongoDev Incident Management Application
+ Incident Management Application
 
 ## DevOps Containerization Assignment
 
