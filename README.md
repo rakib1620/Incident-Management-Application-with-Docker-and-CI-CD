@@ -2,7 +2,7 @@
 
 ## DevOps Containerization Assignment
 
-Welcome to the bongoDev engineering team.
+Welcome to the Bd engineering team.
 
 This repository contains a small three-tier incident-management application. The application is functionally complete, but it has not been prepared for container-based deployment. Your responsibility as the DevOps engineer is to design and implement a reliable Docker-based local runtime for the complete system.
 
